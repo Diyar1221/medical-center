@@ -81,13 +81,6 @@
             <version>5.2.5</version>
         </dependency>
 
-        <!-- Telegram Bot -->
-        <dependency>
-            <groupId>org.telegram</groupId>
-            <artifactId>telegrambots-spring-boot-starter</artifactId>
-            <version>6.9.7.1</version>
-        </dependency>
-
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
