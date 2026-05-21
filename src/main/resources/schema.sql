@@ -84,35 +84,7 @@ CREATE TABLE IF NOT EXISTS medical_records (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Начальные данные
-INSERT INTO permissions (permission, operation) VALUES
-    ('PATIENT', 'READ'),
-    ('PATIENT', 'WRITE'),
-    ('DOCTOR', 'READ'),
-    ('DOCTOR', 'WRITE'),
-    ('APPOINTMENT', 'READ'),
-    ('APPOINTMENT', 'WRITE'),
-    ('RECORD', 'READ'),
-    ('RECORD', 'WRITE'),
-    ('REPORT', 'READ')
-ON CONFLICT DO NOTHING;
-
-INSERT INTO roles (title) VALUES ('ROLE_ADMIN'), ('ROLE_DOCTOR'), ('ROLE_RECEPTIONIST')
-ON CONFLICT DO NOTHING;
-
-INSERT INTO role_permissions (role_id, permission_id)
-SELECT r.id, p.id FROM roles r, permissions p WHERE r.title = 'ROLE_ADMIN'
-ON CONFLICT DO NOTHING;
-
--- Пароль: admin123 (bcrypt)
-INSERT INTO users (username, password, enabled) VALUES
-    ('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', TRUE)
-ON CONFLICT DO NOTHING;
-
-INSERT INTO user_roles (user_id, role_id)
-SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'admin' AND r.title = 'ROLE_ADMIN'
-ON CONFLICT DO NOTHING;
-
+-- Специализации (начальные данные)
 INSERT INTO specializations (name, description) VALUES
     ('Терапевт', 'Общая терапия'),
     ('Кардиолог', 'Заболевания сердца и сосудов'),
@@ -120,3 +92,4 @@ INSERT INTO specializations (name, description) VALUES
     ('Хирург', 'Хирургические вмешательства'),
     ('Педиатр', 'Лечение детей')
 ON CONFLICT DO NOTHING;
+-- Пользователь admin создаётся автоматически через DataInitializer при первом запуске
