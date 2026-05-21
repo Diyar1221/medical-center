@@ -16,7 +16,7 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
-    @Value("${app.server-url:}")
+    @Value("${APP_SERVER_URL:https://medical-center-production-3e72.up.railway.app}")
     private String serverUrl;
 
     @Bean
