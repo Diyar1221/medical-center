@@ -30,31 +30,40 @@ public class DataInitializer implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        if (!userRepository.existsByUsername("admin")) {
-            Permission p1 = createPermission("PATIENT", "READ");
-            Permission p2 = createPermission("PATIENT", "WRITE");
-            Permission p3 = createPermission("DOCTOR", "READ");
-            Permission p4 = createPermission("DOCTOR", "WRITE");
-            Permission p5 = createPermission("APPOINTMENT", "READ");
-            Permission p6 = createPermission("APPOINTMENT", "WRITE");
-            Permission p7 = createPermission("RECORD", "READ");
-            Permission p8 = createPermission("RECORD", "WRITE");
-            Permission p9 = createPermission("REPORT", "READ");
+        userRepository.findByUsername("admin").ifPresentOrElse(
+            admin -> {
+                // Всегда обновляем пароль до корректного BCrypt хеша
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setEnabled(true);
+                userRepository.save(admin);
+                log.info("Пароль admin обновлён");
+            },
+            () -> {
+                Permission p1 = createPermission("PATIENT", "READ");
+                Permission p2 = createPermission("PATIENT", "WRITE");
+                Permission p3 = createPermission("DOCTOR", "READ");
+                Permission p4 = createPermission("DOCTOR", "WRITE");
+                Permission p5 = createPermission("APPOINTMENT", "READ");
+                Permission p6 = createPermission("APPOINTMENT", "WRITE");
+                Permission p7 = createPermission("RECORD", "READ");
+                Permission p8 = createPermission("RECORD", "WRITE");
+                Permission p9 = createPermission("REPORT", "READ");
 
-            Role adminRole = new Role();
-            adminRole.setTitle("ROLE_ADMIN");
-            adminRole.setPermissions(Set.of(p1, p2, p3, p4, p5, p6, p7, p8, p9));
-            entityManager.persist(adminRole);
+                Role adminRole = new Role();
+                adminRole.setTitle("ROLE_ADMIN");
+                adminRole.setPermissions(Set.of(p1, p2, p3, p4, p5, p6, p7, p8, p9));
+                entityManager.persist(adminRole);
 
-            User admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("admin123"))
-                .enabled(true)
-                .roles(Set.of(adminRole))
-                .build();
-            userRepository.save(admin);
-            log.info("Создан пользователь admin с паролем admin123");
-        }
+                User admin = User.builder()
+                    .username("admin")
+                    .password(passwordEncoder.encode("admin123"))
+                    .enabled(true)
+                    .roles(Set.of(adminRole))
+                    .build();
+                userRepository.save(admin);
+                log.info("Создан пользователь admin");
+            }
+        );
     }
 
     private Permission createPermission(String permission, String operation) {
